@@ -1,0 +1,28 @@
+# compiled output
+/dist
+/node_modules
+
+# OS
+.DS_Store
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Env files
+.env
+.env.*
+!.env.example
+
+# TypeScript incremental build
+*.tsbuildinfo
+
+# Test coverage
+/coverage
+
+# NestJS build
+/build
+
+# Graph analysis output
+/graphify-out

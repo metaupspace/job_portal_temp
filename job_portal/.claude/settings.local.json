@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\naksh\\\\Desktop\\\\Metaupspace\\\\job_portal\")",
+      "Bash(Select-Object Name, Mode)",
+      "Bash(Format-Table -AutoSize)",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "Bash(dir C:\\\\Users\\\\naksh\\\\Desktop\\\\Metaupspace\\\\job_portal\\\\dist *)",
+      "Bash(node_modules/.bin/tsc -p tsconfig.build.json --listEmittedFiles)",
+      "Bash(node_modules/.bin/tsc -p tsconfig.build.json --noEmit)",
+      "Bash(node_modules/.bin/tsc -p tsconfig.build.json)",
+      "Bash(find . -name \"main.js\" -not -path \"*/node_modules/*\")",
+      "Bash(python3 -c \"import graphify\")",
+      "Bash(python3 -m pip install graphifyy -q)",
+      "PowerShell(python -c \"import sys; import graphify; open\\('graphify-out/.graphify_python', 'w'\\).write\\(sys.executable\\); print\\('graphify OK, python:', sys.executable\\)\" 2>&1)",
+      "Bash(npx tsc *)",
+      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\naksh\\\\Desktop\\\\Metaupspace\\\\job_portal\\\\src\" -Recurse | Select-Object FullName | ForEach-Object { $_.FullName } | Sort-Object)",
+      "Bash(git add *)",
+      "Bash(git commit -m 'docs: add applicant identity & dashboard design spec *)",
+      "Bash(git commit -m 'docs: add applicant identity & dashboard implementation plan *)",
+      "Bash(git checkout *)",
+      "Bash(node *)",
+      "Bash(git commit *)",
+      "Bash(npx jest *)",
+      "Bash(Select-String -NotMatch \"seed-admin\")",
+      "PowerShell(cd \"C:\\\\Users\\\\naksh\\\\Desktop\\\\Metaupspace\\\\job_portal\"; npx tsc --noEmit 2>&1 | Where-Object { $_ -notmatch \"seed-admin\" })",
+      "Bash(git stash *)",
+      "Bash(npx nest *)",
+      "Bash(git rm *)"
+    ]
+  }
+}
