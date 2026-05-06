@@ -42,14 +42,12 @@ export function useApplyForm(jobId: string) {
     },
   })
 
-  // Fetch job on mount
   useEffect(() => {
     resetForm()
     fetchJob(jobId)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Pre-fill when profile is available
   useEffect(() => {
     if (profile) {
       reset({
@@ -68,7 +66,6 @@ export function useApplyForm(jobId: string) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile])
 
-  // Fetch profile after mid-page login completes
   useEffect(() => {
     if (authStep === "authenticated" && tokens.accessToken && !profile) {
       fetchProfile()
