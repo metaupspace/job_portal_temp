@@ -1,10 +1,10 @@
-"use client"
-import React from "react"
-import Link from "next/link"
-import { ArrowRight } from "lucide-react"
-import Headers from "@/components/header"
-import { useOpenRoles } from "./useOpenRoles"
-import type { Job } from "@/types"
+"use client";
+import React from "react";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import Headers from "@/components/header";
+import { useOpenRoles } from "@/hooks/useOpenRoles";
+import type { Job } from "@/types";
 
 const SkeletonCard = () => (
   <div className="rounded-2xl border border-white/5 bg-[#0F1115] p-6 animate-pulse">
@@ -14,7 +14,7 @@ const SkeletonCard = () => (
     <div className="h-3 bg-white/10 rounded mb-6 w-4/5" />
     <div className="h-10 bg-white/10 rounded-full" />
   </div>
-)
+);
 
 const RoleCard = ({ job }: { job: Job }) => (
   <article className="group relative flex flex-col rounded-2xl border border-white/5 bg-[#0F1115] p-6 transition-colors duration-300 hover:border-white/10 hover:bg-[#12151A]">
@@ -29,11 +29,11 @@ const RoleCard = ({ job }: { job: Job }) => (
       href={`/careers/${job.slug}/apply`}
       className="mt-auto flex w-full items-center justify-center gap-2 rounded-full bg-[#2F6BFF] py-3 text-[14px] font-medium text-white shadow-[0_4px_24px_-8px_rgba(47,107,255,0.6)] transition-transform duration-200 hover:bg-[#3A77FF] active:scale-[0.98]"
     >
-      Apply Now
+      View Details
       <ArrowRight className="h-4 w-4" strokeWidth={2.5} aria-hidden="true" />
     </Link>
   </article>
-)
+);
 
 // Ambient background dots — kept from original design
 const STARS = [
@@ -47,11 +47,11 @@ const STARS = [
   { top: "72%", left: "10%", size: 4, opacity: 0.7, blur: 0 },
   { top: "84%", left: "60%", size: 6, opacity: 0.5, blur: 4 },
   { top: "92%", left: "30%", size: 3, opacity: 0.8, blur: 0 },
-]
+];
 
 export function OpenRoles() {
   const { jobs, tabs, activeTab, setActiveTab, isLoading, error, retry } =
-    useOpenRoles()
+    useOpenRoles();
 
   return (
     <section className="relative isolate min-h-screen w-full overflow-hidden bg-black px-6 font-sans antialiased sm:px-10 lg:px-16">
@@ -84,7 +84,7 @@ export function OpenRoles() {
         {/* Tabs */}
         <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
           {tabs.map((tab) => {
-            const isActive = activeTab === tab
+            const isActive = activeTab === tab;
             return (
               <button
                 key={tab}
@@ -98,7 +98,7 @@ export function OpenRoles() {
               >
                 {tab}
               </button>
-            )
+            );
           })}
         </div>
 
@@ -119,22 +119,22 @@ export function OpenRoles() {
         {/* Cards */}
         {!error && (
           <div className="mt-12 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {isLoading
-              ? Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} />)
-              : jobs.length === 0
-              ? (
-                <p className="col-span-full text-center text-white/40 py-12">
-                  {activeTab === 'All'
-                    ? 'No open roles right now.'
-                    : `No ${activeTab} roles right now.`}
-                </p>
-              )
-              : jobs.map((job) => <RoleCard key={job._id} job={job} />)}
+            {isLoading ? (
+              Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} />)
+            ) : jobs.length === 0 ? (
+              <p className="col-span-full text-center text-white/40 py-12">
+                {activeTab === "All"
+                  ? "No open roles right now."
+                  : `No ${activeTab} roles right now.`}
+              </p>
+            ) : (
+              jobs.map((job) => <RoleCard key={job._id} job={job} />)
+            )}
           </div>
         )}
       </div>
     </section>
-  )
+  );
 }
 
-export default OpenRoles
+export default OpenRoles;
