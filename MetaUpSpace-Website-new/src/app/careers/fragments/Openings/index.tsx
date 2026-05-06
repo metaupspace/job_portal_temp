@@ -26,7 +26,7 @@ const RoleCard = ({ job }: { job: Job }) => (
       {job.description}
     </p>
     <Link
-      href={`/careers/${job.slug}/apply`}
+      href={`/careers/${job.slug}`}
       className="mt-auto flex w-full items-center justify-center gap-2 rounded-full bg-[#2F6BFF] py-3 text-[14px] font-medium text-white shadow-[0_4px_24px_-8px_rgba(47,107,255,0.6)] transition-transform duration-200 hover:bg-[#3A77FF] active:scale-[0.98]"
     >
       View Details
