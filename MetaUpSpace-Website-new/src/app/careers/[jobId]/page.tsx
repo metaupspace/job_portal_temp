@@ -26,12 +26,13 @@ const SkeletonDetail = () => (
 
 export default function JobDetailPage() {
   const { jobId } = useParams<{ jobId: string }>()
-  const { selectedJob: job, fetchJob, isLoading, error, clearSelectedJob } = useJobsStore()
+  const { selectedJob: job, fetchJob, isLoading, error, clearSelectedJob, clearError } = useJobsStore()
 
   useEffect(() => {
     clearSelectedJob()
+    clearError()
     fetchJob(jobId)
-    // clearSelectedJob and fetchJob are stable Zustand action refs — safe to omit
+    // clearSelectedJob, clearError and fetchJob are stable Zustand action refs — safe to omit
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [jobId])
 
