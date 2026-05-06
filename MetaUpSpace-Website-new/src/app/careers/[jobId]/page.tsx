@@ -31,6 +31,7 @@ export default function JobDetailPage() {
   useEffect(() => {
     clearSelectedJob()
     fetchJob(jobId)
+    // clearSelectedJob and fetchJob are stable Zustand action refs — safe to omit
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [jobId])
 
@@ -42,14 +43,28 @@ export default function JobDetailPage() {
     )
   }
 
-  if (error || !job) {
+  if (error) {
+    return (
+      <div className="min-h-screen bg-black flex flex-col items-center justify-center gap-4">
+        <p className="text-white/40 text-sm">Something went wrong. Please try again.</p>
+        <button
+          onClick={() => fetchJob(jobId)}
+          className="text-[#2F6BFF] text-sm hover:underline"
+        >
+          Retry
+        </button>
+        <Link href="/careers" className="text-zinc-500 text-sm hover:underline">
+          ← Back to Careers
+        </Link>
+      </div>
+    )
+  }
+
+  if (!job) {
     return (
       <div className="min-h-screen bg-black flex flex-col items-center justify-center gap-4">
         <p className="text-white/40 text-sm">This role is no longer available.</p>
-        <Link
-          href="/careers"
-          className="text-[#2F6BFF] text-sm hover:underline"
-        >
+        <Link href="/careers" className="text-[#2F6BFF] text-sm hover:underline">
           ← Back to Careers
         </Link>
       </div>
