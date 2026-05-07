@@ -1,21 +1,21 @@
-export type JobType = 'TECH' | 'NON_TECH'
+export type JobType = 'tech' | 'non-tech'
 
-export type Experience = 'FRESHER' | '0-1' | '1-3' | '3-5'
+export type Experience = 'fresher' | '0-1' | '1-3' | '3-5'
 
 export type ApplicationStatus =
-  | 'PENDING'
-  | 'REVIEWED'
-  | 'SHORTLISTED'
-  | 'REJECTED'
-  | 'HIRED'
-  | 'WITHDRAWN'
+  | 'pending'
+  | 'reviewed'
+  | 'shortlisted'
+  | 'rejected'
+  | 'hired'
+  | 'withdrawn'
 
 export type HearAboutUs =
-  | 'LINKEDIN_POST'
-  | 'LINKEDIN_COMPANY'
-  | 'JOB_PORTAL'
-  | 'WHATSAPP_TELEGRAM'
-  | 'COMPANY_WEBSITE'
-  | 'OTHER'
+  | 'linkedin_post'
+  | 'linkedin_company'
+  | 'job_portal'
+  | 'whatsapp_telegram'
+  | 'company_website'
+  | 'other'
 
-export type FieldType = 'TEXT' | 'TEXTAREA' | 'SELECT' | 'BOOLEAN' | 'NUMBER'
+export type FieldType = 'text' | 'textarea' | 'select' | 'boolean' | 'number'

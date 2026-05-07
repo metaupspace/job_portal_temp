@@ -43,7 +43,7 @@ export class ApplicantsController {
   @HttpCode(200)
   @Throttle({ default: { limit: 5, ttl: 900000 } })
   @ResponseMessage('OTP verified')
-  @ApiOperation({ summary: 'Verify email OTP — returns setupToken or sessionToken' })
+  @ApiOperation({ summary: 'Verify email OTP — returns accessToken' })
   @ApiResponse({ status: 200 })
   verifyOtp(@Body() dto: VerifyOtpDto) {
     return this.applicantsService.verifyOtp(dto.email, dto.otp);

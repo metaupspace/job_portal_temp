@@ -1,5 +1,5 @@
 "use client"
-import React from "react"
+import React, { useRef, useState } from "react"
 import { Controller } from "react-hook-form"
 import type {
   UseFormRegister,
@@ -7,22 +7,26 @@ import type {
   FieldErrors,
 } from "react-hook-form"
 import CustomSelect from "@/components/form/CustomSelect"
+import { api, getErrorMessage, type ApiResponse } from "@/lib/api"
 import type { CreateApplicationPayload, Job } from "@/types"
 
+const RESUME_ACCEPT = ".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+const RESUME_MAX_BYTES = 10 * 1024 * 1024
+
 const EXPERIENCE_OPTIONS = [
-  { label: "Fresher", value: "FRESHER" },
+  { label: "Fresher", value: "fresher" },
   { label: "0–1 years", value: "0-1" },
   { label: "1–3 years", value: "1-3" },
   { label: "3–5 years", value: "3-5" },
 ]
 
 const HEAR_ABOUT_OPTIONS = [
-  { label: "LinkedIn Post", value: "LINKEDIN_POST" },
-  { label: "LinkedIn Company Page", value: "LINKEDIN_COMPANY" },
-  { label: "Job Portal", value: "JOB_PORTAL" },
-  { label: "WhatsApp / Telegram", value: "WHATSAPP_TELEGRAM" },
-  { label: "Company Website", value: "COMPANY_WEBSITE" },
-  { label: "Other", value: "OTHER" },
+  { label: "LinkedIn Post", value: "linkedin_post" },
+  { label: "LinkedIn Company Page", value: "linkedin_company" },
+  { label: "Job Portal", value: "job_portal" },
+  { label: "WhatsApp / Telegram", value: "whatsapp_telegram" },
+  { label: "Company Website", value: "company_website" },
+  { label: "Other", value: "other" },
 ]
 
 const inputClass =
@@ -224,15 +228,17 @@ export function StepOne({ register, control, errors, job, onNext }: Props) {
         </div>
 
         <div>
-          <label className={labelClass}>Resume URL *</label>
-          <input
-            {...register("resumeUrl", {
-              required: "Resume URL is required",
-              pattern: { value: /^https?:\/\/.+/, message: "Must be a valid URL" },
-            })}
-            type="url"
-            placeholder="https://drive.google.com/your-resume"
-            className={inputClass}
+          <label className={labelClass}>Resume *</label>
+          <Controller
+            name="resumeUrl"
+            control={control}
+            rules={{ required: "Please upload your resume" }}
+            render={({ field }) => (
+              <ResumeUpload
+                value={field.value}
+                onChange={field.onChange}
+              />
+            )}
           />
           {errors.resumeUrl && <p className={errorClass}>{errors.resumeUrl.message}</p>}
         </div>
@@ -272,7 +278,7 @@ export function StepOne({ register, control, errors, job, onNext }: Props) {
       </div>
 
       {/* Tech-only fields */}
-      {job.type === "TECH" && (
+      {job.type === "tech" && (
         <div className={cardClass}>
           <p className={sectionLabelClass}>Technical Details</p>
 
@@ -326,6 +332,121 @@ export function StepOne({ register, control, errors, job, onNext }: Props) {
       >
         Continue to Step 2 →
       </button>
+    </div>
+  )
+}
+
+function ResumeUpload({
+  value,
+  onChange,
+}: {
+  value: string | undefined
+  onChange: (url: string) => void
+}) {
+  const fileRef = useRef<HTMLInputElement>(null)
+  const [filename, setFilename] = useState<string>("")
+  const [status, setStatus] = useState<"idle" | "uploading" | "done" | "error">(
+    value ? "done" : "idle",
+  )
+  const [error, setError] = useState<string>("")
+
+  const handleSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    if (file.size > RESUME_MAX_BYTES) {
+      setError("File is larger than 10 MB")
+      setStatus("error")
+      return
+    }
+
+    setFilename(file.name)
+    setStatus("uploading")
+    setError("")
+
+    try {
+      const formData = new FormData()
+      formData.append("file", file)
+      const { data } = await api.post<ApiResponse<{ url: string }>>(
+        "/upload/resume",
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } },
+      )
+      onChange(data.data.url)
+      setStatus("done")
+    } catch (err) {
+      setError(getErrorMessage(err))
+      setStatus("error")
+      onChange("")
+    }
+  }
+
+  const clear = () => {
+    onChange("")
+    setFilename("")
+    setStatus("idle")
+    setError("")
+    if (fileRef.current) fileRef.current.value = ""
+  }
+
+  return (
+    <div>
+      <input
+        ref={fileRef}
+        type="file"
+        accept={RESUME_ACCEPT}
+        onChange={handleSelect}
+        className="hidden"
+      />
+
+      {status === "idle" && (
+        <button
+          type="button"
+          onClick={() => fileRef.current?.click()}
+          className="sf w-full rounded-lg border border-dashed border-white/20 bg-gray-800/10 px-4 py-6 text-sm text-white/60 hover:border-white/40 hover:text-white/80 transition-all"
+        >
+          Click to upload PDF or Word (max 10 MB)
+        </button>
+      )}
+
+      {status === "uploading" && (
+        <div className="sf w-full rounded-lg border border-white/10 bg-gray-800/10 px-4 py-3 text-sm text-white/60">
+          Uploading {filename}…
+        </div>
+      )}
+
+      {status === "done" && value && (
+        <div className="sf flex items-center justify-between rounded-lg border border-white/10 bg-gray-800/10 px-4 py-3 text-sm">
+          <a
+            href={value}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="truncate text-white/80 hover:text-white"
+          >
+            {filename || "Resume uploaded"}
+          </a>
+          <button
+            type="button"
+            onClick={clear}
+            className="ml-3 text-xs text-white/40 hover:text-white/80"
+          >
+            Replace
+          </button>
+        </div>
+      )}
+
+      {status === "error" && (
+        <div className="space-y-2">
+          <button
+            type="button"
+            onClick={() => fileRef.current?.click()}
+            className="sf w-full rounded-lg border border-dashed border-red-400/40 bg-gray-800/10 px-4 py-6 text-sm text-red-400 hover:border-red-400/60 transition-all"
+          >
+            Upload failed — click to try again
+          </button>
+          {error && <p className="sf text-xs text-red-400">{error}</p>}
+        </div>
+      )}
     </div>
   )
 }

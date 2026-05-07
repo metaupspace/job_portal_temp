@@ -63,7 +63,7 @@ export function StepTwo({
                   {field.required && <span className="text-white/30"> *</span>}
                 </label>
 
-                {field.fieldType === "TEXT" && (
+                {field.fieldType === "text" && (
                   <input
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     {...register(fieldPath as any, {
@@ -74,7 +74,7 @@ export function StepTwo({
                   />
                 )}
 
-                {field.fieldType === "TEXTAREA" && (
+                {field.fieldType === "textarea" && (
                   <textarea
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     {...register(fieldPath as any, {
@@ -85,7 +85,7 @@ export function StepTwo({
                   />
                 )}
 
-                {field.fieldType === "SELECT" && (
+                {field.fieldType === "select" && (
                   <Controller
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     name={fieldPath as any}
@@ -108,7 +108,7 @@ export function StepTwo({
                   />
                 )}
 
-                {field.fieldType === "BOOLEAN" && (
+                {field.fieldType === "boolean" && (
                   <div className="flex items-center gap-3 py-1">
                     <input
                       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -123,7 +123,7 @@ export function StepTwo({
                   </div>
                 )}
 
-                {field.fieldType === "NUMBER" && (
+                {field.fieldType === "number" && (
                   <input
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     {...register(fieldPath as any, {

@@ -84,7 +84,17 @@ export function useApplyForm(jobId: string) {
 
   const onSubmit = handleSubmit((values) => {
     if (!job) return
-    setFormData(values)
+    const payload = { ...values }
+    if (job.type !== "tech") {
+      delete payload.githubId
+      delete payload.portfolioLink
+      delete payload.technologiesKnown
+      delete payload.hardestProblem
+    }
+    for (const k of Object.keys(payload) as Array<keyof typeof payload>) {
+      if (payload[k] === "") delete payload[k]
+    }
+    setFormData(payload)
     submitApplication(job._id)
   })
 

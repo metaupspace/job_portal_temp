@@ -17,22 +17,22 @@ const SkeletonCard = () => (
 )
 
 const RoleCard = ({ job }: { job: Job }) => (
-  <article className="group relative flex flex-col rounded-2xl border border-white/5 bg-[#0F1115] p-6 transition-colors duration-300 hover:border-white/10 hover:bg-[#12151A]">
-    <p className="mb-3 text-[13px] font-normal text-zinc-400">{job.domain}</p>
-    <h3 className="mb-3 text-[17px] font-semibold leading-snug tracking-tight text-white">
+  <Link
+    href={`/careers/${job.slug}`}
+    className="group relative flex flex-col rounded-2xl border border-white/5 bg-[#0F1115] p-5 sm:p-6 transition-colors duration-300 hover:border-white/10 hover:bg-[#12151A]"
+  >
+    <p className="mb-2 sm:mb-3 text-[12px] sm:text-[13px] font-normal text-zinc-400">{job.domain}</p>
+    <h3 className="mb-2 sm:mb-3 text-[15px] sm:text-[17px] font-semibold leading-snug tracking-tight text-white">
       {job.title}
     </h3>
-    <p className="mb-6 text-[14px] leading-relaxed text-zinc-400 line-clamp-3">
+    <p className="mb-5 sm:mb-6 text-[13px] sm:text-[14px] leading-relaxed text-zinc-400 line-clamp-3">
       {job.description}
     </p>
-    <Link
-      href={`/careers/${job.slug}/apply`}
-      className="mt-auto flex w-full items-center justify-center gap-2 rounded-full bg-[#2F6BFF] py-3 text-[14px] font-medium text-white shadow-[0_4px_24px_-8px_rgba(47,107,255,0.6)] transition-transform duration-200 hover:bg-[#3A77FF] active:scale-[0.98]"
-    >
-      Apply Now
+    <span className="mt-auto flex w-full items-center justify-center gap-2 rounded-full bg-[#2F6BFF] py-2.5 sm:py-3 text-[13px] sm:text-[14px] font-medium text-white shadow-[0_4px_24px_-8px_rgba(47,107,255,0.6)] transition-transform duration-200 group-hover:bg-[#3A77FF] group-active:scale-[0.98]">
+      View Details
       <ArrowRight className="h-4 w-4" strokeWidth={2.5} aria-hidden="true" />
-    </Link>
-  </article>
+    </span>
+  </Link>
 )
 
 // Ambient background dots — kept from original design
@@ -54,7 +54,7 @@ export function OpenRoles() {
     useOpenRoles()
 
   return (
-    <section className="relative isolate min-h-screen w-full overflow-hidden bg-black px-6 font-sans antialiased sm:px-10 lg:px-16">
+    <section className="relative isolate min-h-screen w-full overflow-hidden bg-black px-4 py-12 sm:px-6 sm:py-16 md:px-10 lg:px-16 font-sans antialiased">
       {/* Ambient stars */}
       <div aria-hidden className="pointer-events-none absolute inset-0">
         {STARS.map((s, i) => (
@@ -82,7 +82,7 @@ export function OpenRoles() {
         />
 
         {/* Tabs */}
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
+        <div className="mt-8 sm:mt-10 flex flex-wrap items-center justify-center gap-2 sm:gap-3">
           {tabs.map((tab) => {
             const isActive = activeTab === tab
             return (
@@ -90,7 +90,7 @@ export function OpenRoles() {
                 key={tab}
                 onClick={() => setActiveTab(tab)}
                 className={[
-                  "rounded-full px-5 py-2.5 text-[14px] font-medium transition-all duration-200",
+                  "rounded-full px-4 sm:px-5 py-2 sm:py-2.5 text-[13px] sm:text-[14px] font-medium transition-all duration-200",
                   isActive
                     ? "bg-gradient-to-b from-[#3A77FF] to-[#2256E0] text-white shadow-[0_6px_20px_-6px_rgba(47,107,255,0.7)]"
                     : "border border-white/12 bg-transparent text-white/85 hover:border-white/25 hover:bg-white/5",
@@ -118,7 +118,7 @@ export function OpenRoles() {
 
         {/* Cards */}
         {!error && (
-          <div className="mt-12 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-8 sm:mt-12 grid grid-cols-1 gap-4 sm:gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {isLoading
               ? Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} />)
               : jobs.length === 0

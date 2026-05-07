@@ -7,6 +7,7 @@ import List from './fragments/list'
 import Link from 'next/link';
 import GradientText from '@/components/ui/GradientText/GradientText';
 import { usePathname } from 'next/navigation';
+import { useAuthStore } from '@/store';
 
 const navLinks = [
   {
@@ -51,6 +52,11 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const pathname = usePathname();
   const isIrdp = pathname?.startsWith('/irdp');
+  const isAuthenticated = useAuthStore(
+    (s) => s.step === 'authenticated' && !!s.tokens.accessToken,
+  );
+  const ctaLabel = isAuthenticated ? 'Dashboard' : 'Contact Us';
+  const ctaHref = isAuthenticated ? '/dashboard' : '/contact';
   const [isOverHero, setIsOverHero] = useState(false);
   useEffect(() => {
     let io: IntersectionObserver | null = null;
@@ -121,15 +127,15 @@ export default function Navbar() {
           <List />
         </div>
 
-        {/* Desktop Contact Button */}
+        {/* Desktop CTA Button */}
         <div className="hidden xl:block">
-          <Link href={"/contact"}>
+          <Link href={ctaHref}>
             <Button
               variant='primary'
               icon={<ArrowRight />}
               className="rounded-full"
             >
-              Contact Us
+              {ctaLabel}
             </Button>
           </Link>
         </div>
@@ -175,7 +181,7 @@ export default function Navbar() {
               ))}
               <div className="pt-4 border-t border-white/20">
                 <Link
-                  href="/contact"
+                  href={ctaHref}
                   onClick={() => setIsMenuOpen(false)}
                   className="block"
                 >
@@ -184,7 +190,7 @@ export default function Navbar() {
                     icon={<ArrowRight />}
                     className="w-full justify-center rounded-full"
                   >
-                    Contact Us
+                    {ctaLabel}
                   </Button>
                 </Link>
               </div>

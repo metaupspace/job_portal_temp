@@ -20,7 +20,18 @@
       "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\naksh\\\\Desktop\\\\Metaupspace\\\\Job-portal-full\\\\MetaUpSpace-Website-new\" -Directory)",
       "Bash(Select-Object Name)",
       "Bash(New-Item *)",
-      "PowerShell(ls *)"
+      "PowerShell(ls *)",
+      "Bash(npx nest *)",
+      "Bash(curl -sI http://localhost:8000/api/docs)",
+      "Bash(curl -sI http://localhost:3000/api/docs)",
+      "Bash(curl -sI http://localhost:8000/api/docs/swagger-ui-bundle.js)",
+      "Bash(npm run *)",
+      "Bash(echo \"---exit: $?\")",
+      "Bash(npx ts-node *)",
+      "Bash(kill 82987)",
+      "Bash(PORT=8000 node --enable-source-maps dist/main)",
+      "Bash(curl -s http://localhost:8000/api/applicants/me/applications -H \"Authorization: Bearer test\")",
+      "Bash(kill 86703)"
     ]
   }
 }

@@ -30,8 +30,7 @@ const WhyUs = () => {
   ];
 
   return (
-    <main className="mt-10 max-w-6xl mx-auto px-4">
-      {" "}
+    <main className="mt-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
       <Headers
         label="WHY US"
         heading="What we Value at MetaUpSpace?"
@@ -39,32 +38,32 @@ const WhyUs = () => {
         flat monthly fee, with highly-converting designs delivered so fast that
         it will blow your mind."
       />
-      <div className="relative mt-20">
-        {/* Top-left corner registration mark */}
+      <div className="relative mt-12 md:mt-20">
+        {/* Decorative registration marks — desktop only to avoid mobile overflow */}
         <div
           aria-hidden
-          className="absolute -top-20 -left-10 w-px h-[calc(100%+6rem)] bg-gradient-to-b from-white/30 via-white/10 to-transparent pointer-events-none"
+          className="hidden md:block absolute -top-20 -left-10 w-px h-[calc(100%+6rem)] bg-gradient-to-b from-white/30 via-white/10 to-transparent pointer-events-none"
         />
         <div
           aria-hidden
-          className="absolute -top-10 left-260 h-px w-[100%] -translate-x-full bg-gradient-to-r from-white/30 via-white/10 to-transparent pointer-events-none"
+          className="hidden md:block absolute -top-10 right-0 h-px w-full bg-gradient-to-l from-white/30 via-white/10 to-transparent pointer-events-none"
         />
         <div
           aria-hidden
-          className="absolute -top-10 -left-10 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-white/30 pointer-events-none"
+          className="hidden md:block absolute -top-10 -left-10 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-white/30 pointer-events-none"
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
           {values.map(({ icon: Icon, title, description }) => (
             <div
               key={title}
-              className="group rounded-2xl border border-white/60 bg-[#0d0d0d] p-7 transition-colors duration-300 hover:border-white/70 hover:bg-[#111111]"
+              className="group rounded-2xl border border-white/60 bg-[#0d0d0d] p-5 sm:p-6 md:p-7 transition-colors duration-300 hover:border-white/70 hover:bg-[#111111]"
             >
-              <Icon className="w-7 h-7 text-white mb-8" strokeWidth={1.6} />
-              <h3 className="text-[17px] font-semibold text-white mb-3">
+              <Icon className="w-6 h-6 sm:w-7 sm:h-7 text-white mb-6 sm:mb-8" strokeWidth={1.6} />
+              <h3 className="text-base sm:text-[17px] font-semibold text-white mb-2 sm:mb-3">
                 {title}
               </h3>
-              <p className="text-[14px] leading-relaxed text-neutral-400">
+              <p className="text-[13px] sm:text-[14px] leading-relaxed text-neutral-400">
                 {description}
               </p>
             </div>

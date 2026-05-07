@@ -1,6 +1,10 @@
 import { create } from 'zustand'
 import { api, getErrorMessage, type ApiResponse } from '@/lib/api'
-import type { Application, CreateApplicationPayload } from '@/types'
+import type {
+  Application,
+  ApplicationSummary,
+  CreateApplicationPayload,
+} from '@/types'
 
 interface ApplicationState {
   formData: Partial<CreateApplicationPayload>
@@ -8,7 +12,7 @@ interface ApplicationState {
   isSubmitting: boolean
   submitError: string | null
   submitSuccess: boolean
-  myApplications: Application[]
+  myApplications: ApplicationSummary[]
   isLoadingApplications: boolean
   applicationsError: string | null
 }
@@ -41,8 +45,7 @@ export const useApplicationStore = create<ApplicationState & ApplicationActions>
   (set, get) => ({
     ...initialState,
 
-    setFormData: (data) =>
-      set((state) => ({ formData: { ...state.formData, ...data } })),
+    setFormData: (data) => set({ formData: data }),
 
     setStep: (step) => set({ currentStep: step }),
 
@@ -69,7 +72,7 @@ export const useApplicationStore = create<ApplicationState & ApplicationActions>
     fetchMyApplications: async () => {
       set({ isLoadingApplications: true, applicationsError: null })
       try {
-        const { data } = await api.get<ApiResponse<Application[]>>(
+        const { data } = await api.get<ApiResponse<ApplicationSummary[]>>(
           '/applicants/me/applications',
         )
         set({ myApplications: data.data ?? [], isLoadingApplications: false })
