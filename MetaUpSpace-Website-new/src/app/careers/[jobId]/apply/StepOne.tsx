@@ -1,16 +1,24 @@
 "use client"
 import React, { useRef, useState } from "react"
+import { ArrowRight } from "lucide-react"
 import { Controller } from "react-hook-form"
 import type {
   UseFormRegister,
   Control,
   FieldErrors,
 } from "react-hook-form"
-import CustomSelect from "@/components/form/CustomSelect"
+import {
+  CustomSelect,
+  FormCard,
+  FormCheckbox,
+  FormInput,
+  FormTextarea,
+} from "@/components/form"
 import { api, getErrorMessage, type ApiResponse } from "@/lib/api"
 import type { CreateApplicationPayload, Job } from "@/types"
 
-const RESUME_ACCEPT = ".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+const RESUME_ACCEPT =
+  ".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 const RESUME_MAX_BYTES = 10 * 1024 * 1024
 
 const EXPERIENCE_OPTIONS = [
@@ -29,18 +37,8 @@ const HEAR_ABOUT_OPTIONS = [
   { label: "Other", value: "other" },
 ]
 
-const inputClass =
-  "w-full sf rounded-lg bg-gray-800/10 outline outline-1 outline-offset-[-1px] outline-white/20 backdrop-blur-sm px-3 py-2.5 text-sm text-white placeholder-white/25 focus:outline-white/40 transition-all resize-none"
-
-const labelClass = "sf block text-sm text-white/60 mb-1.5"
-
-const errorClass = "sf mt-1.5 text-xs text-red-400"
-
-const sectionLabelClass =
-  "sf text-xs uppercase tracking-widest bg-gradient-to-r from-blue-500 via-blue-600 to-cyan-500 bg-clip-text text-transparent mb-4"
-
-const cardClass =
-  "rounded-2xl border border-white/5 bg-[#0F1115] p-6 space-y-5"
+const labelClass = "block text-white text-sm font-medium mb-3"
+const errorClass = "text-red-500 text-sm mt-1"
 
 interface Props {
   register: UseFormRegister<CreateApplicationPayload>
@@ -52,100 +50,91 @@ interface Props {
 
 export function StepOne({ register, control, errors, job, onNext }: Props) {
   return (
-    <div className="space-y-4">
-
+    <div className="space-y-6">
       {/* Personal Info */}
-      <div className={cardClass}>
-        <p className={sectionLabelClass}>Personal Information</p>
+      <FormCard
+        title="Personal Information"
+        subtitle="Tell us who you are and how we can reach you."
+      >
+        <FormInput
+          label="Full Name"
+          required
+          placeholder="Jane Doe"
+          {...register("fullName", { required: "Full name is required" })}
+          error={errors.fullName?.message}
+        />
 
-        <div>
-          <label className={labelClass}>Full Name *</label>
-          <input
-            {...register("fullName", { required: "Full name is required" })}
-            type="text"
-            placeholder="Jane Doe"
-            className={inputClass}
-          />
-          {errors.fullName && <p className={errorClass}>{errors.fullName.message}</p>}
-        </div>
+        <FormInput
+          label="Email Address"
+          required
+          type="email"
+          placeholder="jane@example.com"
+          {...register("email", {
+            required: "Email is required",
+            pattern: {
+              value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+              message: "Invalid email",
+            },
+          })}
+          error={errors.email?.message}
+        />
 
-        <div>
-          <label className={labelClass}>Email Address *</label>
-          <input
-            {...register("email", {
-              required: "Email is required",
-              pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "Invalid email" },
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <FormInput
+            label="Contact Number"
+            required
+            placeholder="+91 98765 43210"
+            {...register("contactNumber", {
+              required: "Contact number is required",
             })}
-            type="email"
-            placeholder="jane@example.com"
-            className={inputClass}
+            error={errors.contactNumber?.message}
           />
-          {errors.email && <p className={errorClass}>{errors.email.message}</p>}
+          <FormInput
+            label="WhatsApp Number"
+            placeholder="Same as contact or different"
+            {...register("whatsappNumber")}
+          />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className={labelClass}>Contact Number *</label>
-            <input
-              {...register("contactNumber", { required: "Contact number is required" })}
-              type="text"
-              placeholder="+91 98765 43210"
-              className={inputClass}
-            />
-            {errors.contactNumber && <p className={errorClass}>{errors.contactNumber.message}</p>}
-          </div>
-          <div>
-            <label className={labelClass}>WhatsApp Number</label>
-            <input
-              {...register("whatsappNumber")}
-              type="text"
-              placeholder="Same as contact or different"
-              className={inputClass}
-            />
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <FormInput
+            label="Current Location"
+            required
+            placeholder="City, Country"
+            {...register("currentLocation", {
+              required: "Location is required",
+            })}
+            error={errors.currentLocation?.message}
+          />
+          <FormInput
+            label="LinkedIn Profile"
+            required
+            placeholder="linkedin.com/in/janedoe"
+            {...register("linkedinId", { required: "LinkedIn is required" })}
+            error={errors.linkedinId?.message}
+          />
         </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className={labelClass}>Current Location *</label>
-            <input
-              {...register("currentLocation", { required: "Location is required" })}
-              type="text"
-              placeholder="City, Country"
-              className={inputClass}
-            />
-            {errors.currentLocation && <p className={errorClass}>{errors.currentLocation.message}</p>}
-          </div>
-          <div>
-            <label className={labelClass}>LinkedIn Profile *</label>
-            <input
-              {...register("linkedinId", { required: "LinkedIn is required" })}
-              type="text"
-              placeholder="linkedin.com/in/janedoe"
-              className={inputClass}
-            />
-            {errors.linkedinId && <p className={errorClass}>{errors.linkedinId.message}</p>}
-          </div>
-        </div>
-      </div>
+      </FormCard>
 
       {/* Professional Details */}
-      <div className={cardClass}>
-        <p className={sectionLabelClass}>Professional Details</p>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <FormCard
+        title="Professional Details"
+        subtitle="Share your background and current situation."
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <FormInput
+            label="Qualification"
+            required
+            placeholder="B.Tech Computer Science"
+            {...register("qualification", {
+              required: "Qualification is required",
+            })}
+            error={errors.qualification?.message}
+          />
           <div>
-            <label className={labelClass}>Qualification *</label>
-            <input
-              {...register("qualification", { required: "Qualification is required" })}
-              type="text"
-              placeholder="B.Tech Computer Science"
-              className={inputClass}
-            />
-            {errors.qualification && <p className={errorClass}>{errors.qualification.message}</p>}
-          </div>
-          <div>
-            <label className={labelClass}>Experience *</label>
+            <label className={labelClass}>
+              Experience<span className="text-blue-400"> *</span>
+            </label>
             <Controller
               name="experience"
               control={control}
@@ -160,55 +149,42 @@ export function StepOne({ register, control, errors, job, onNext }: Props) {
                 />
               )}
             />
-            {errors.experience && <p className={errorClass}>{errors.experience.message}</p>}
+            {errors.experience && (
+              <p className={errorClass}>{errors.experience.message}</p>
+            )}
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className={labelClass}>Last / Current Salary</label>
-            <input
-              {...register("lastSalary")}
-              type="text"
-              placeholder="e.g. 8 LPA or $60,000"
-              className={inputClass}
-            />
-          </div>
-          <div>
-            <label className={labelClass}>Notice Period</label>
-            <input
-              {...register("noticePeriod")}
-              type="text"
-              placeholder="e.g. 30 days, Immediate"
-              className={inputClass}
-            />
-          </div>
-        </div>
-
-        <div className="flex items-center gap-3 py-1">
-          <input
-            {...register("comfortableFlexibleShifts")}
-            type="checkbox"
-            id="flexShifts"
-            className="w-4 h-4 rounded border-white/20 bg-white/5 accent-[#2F6BFF]"
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <FormInput
+            label="Last / Current Salary"
+            placeholder="e.g. 8 LPA or $60,000"
+            {...register("lastSalary")}
           />
-          <label htmlFor="flexShifts" className="sf text-sm text-white/60 cursor-pointer">
-            Comfortable with flexible / rotational shifts
-          </label>
+          <FormInput
+            label="Notice Period"
+            placeholder="e.g. 30 days, Immediate"
+            {...register("noticePeriod")}
+          />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <FormCheckbox
+          label="Comfortable with flexible / rotational shifts"
+          id="flexShifts"
+          {...register("comfortableFlexibleShifts")}
+        />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <FormInput
+            label="Referred By"
+            placeholder="Name of referrer (if any)"
+            {...register("referredBy")}
+          />
           <div>
-            <label className={labelClass}>Referred By</label>
-            <input
-              {...register("referredBy")}
-              type="text"
-              placeholder="Name of referrer (if any)"
-              className={inputClass}
-            />
-          </div>
-          <div>
-            <label className={labelClass}>How did you hear about us? *</label>
+            <label className={labelClass}>
+              How did you hear about us?
+              <span className="text-blue-400"> *</span>
+            </label>
             <Controller
               name="hearAboutUs"
               control={control}
@@ -223,114 +199,102 @@ export function StepOne({ register, control, errors, job, onNext }: Props) {
                 />
               )}
             />
-            {errors.hearAboutUs && <p className={errorClass}>{errors.hearAboutUs.message}</p>}
+            {errors.hearAboutUs && (
+              <p className={errorClass}>{errors.hearAboutUs.message}</p>
+            )}
           </div>
         </div>
 
         <div>
-          <label className={labelClass}>Resume *</label>
+          <label className={labelClass}>
+            Resume<span className="text-blue-400"> *</span>
+          </label>
           <Controller
             name="resumeUrl"
             control={control}
             rules={{ required: "Please upload your resume" }}
             render={({ field }) => (
-              <ResumeUpload
-                value={field.value}
-                onChange={field.onChange}
-              />
+              <ResumeUpload value={field.value} onChange={field.onChange} />
             )}
           />
-          {errors.resumeUrl && <p className={errorClass}>{errors.resumeUrl.message}</p>}
+          {errors.resumeUrl && (
+            <p className={errorClass}>{errors.resumeUrl.message}</p>
+          )}
         </div>
-      </div>
+      </FormCard>
 
       {/* Essay Questions */}
-      <div className={cardClass}>
-        <p className={sectionLabelClass}>About You</p>
+      <FormCard
+        title="About You"
+        subtitle="Help us understand what motivates you."
+      >
+        <FormTextarea
+          label="Why are you a good fit for this role?"
+          required
+          placeholder="Describe your relevant experience and skills..."
+          {...register("whyGoodFit", {
+            required: "This field is required",
+            maxLength: { value: 1000, message: "Maximum 1000 characters" },
+          })}
+          error={errors.whyGoodFit?.message}
+        />
 
-        <div>
-          <label className={labelClass}>Why are you a good fit for this role? *</label>
-          <textarea
-            {...register("whyGoodFit", {
-              required: "This field is required",
-              maxLength: { value: 1000, message: "Maximum 1000 characters" },
-            })}
-            rows={4}
-            placeholder="Describe your relevant experience and skills..."
-            className={inputClass}
-          />
-          {errors.whyGoodFit && <p className={errorClass}>{errors.whyGoodFit.message}</p>}
-        </div>
-
-        <div>
-          <label className={labelClass}>Why do you want to join MetaUpSpace? *</label>
-          <textarea
-            {...register("whyJoinUs", {
-              required: "This field is required",
-              maxLength: { value: 1000, message: "Maximum 1000 characters" },
-            })}
-            rows={4}
-            placeholder="Share your motivation..."
-            className={inputClass}
-          />
-          {errors.whyJoinUs && <p className={errorClass}>{errors.whyJoinUs.message}</p>}
-        </div>
-      </div>
+        <FormTextarea
+          label="Why do you want to join MetaUpSpace?"
+          required
+          placeholder="Share your motivation..."
+          {...register("whyJoinUs", {
+            required: "This field is required",
+            maxLength: { value: 1000, message: "Maximum 1000 characters" },
+          })}
+          error={errors.whyJoinUs?.message}
+        />
+      </FormCard>
 
       {/* Tech-only fields */}
       {job.type === "tech" && (
-        <div className={cardClass}>
-          <p className={sectionLabelClass}>Technical Details</p>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className={labelClass}>GitHub Profile</label>
-              <input
-                {...register("githubId")}
-                type="text"
-                placeholder="github.com/janedoe"
-                className={inputClass}
-              />
-            </div>
-            <div>
-              <label className={labelClass}>Portfolio / Website</label>
-              <input
-                {...register("portfolioLink")}
-                type="text"
-                placeholder="https://janedoe.dev"
-                className={inputClass}
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className={labelClass}>Technologies Known</label>
-            <textarea
-              {...register("technologiesKnown")}
-              rows={2}
-              placeholder="React, Node.js, Python, AWS..."
-              className={inputClass}
+        <FormCard
+          title="Technical Details"
+          subtitle="Share your engineering background."
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormInput
+              label="GitHub Profile"
+              placeholder="github.com/janedoe"
+              {...register("githubId")}
+            />
+            <FormInput
+              label="Portfolio / Website"
+              placeholder="https://janedoe.dev"
+              {...register("portfolioLink")}
             />
           </div>
 
-          <div>
-            <label className={labelClass}>Hardest Technical Problem You&apos;ve Solved</label>
-            <textarea
-              {...register("hardestProblem")}
-              rows={4}
-              placeholder="Describe the problem, your approach, and the outcome..."
-              className={inputClass}
-            />
-          </div>
-        </div>
+          <FormTextarea
+            label="Technologies Known"
+            rows={2}
+            placeholder="React, Node.js, Python, AWS..."
+            {...register("technologiesKnown")}
+          />
+
+          <FormTextarea
+            label="Hardest Technical Problem You've Solved"
+            placeholder="Describe the problem, your approach, and the outcome..."
+            {...register("hardestProblem")}
+          />
+        </FormCard>
       )}
 
       <button
         type="button"
         onClick={onNext}
-        className="sf w-full rounded-full bg-[#2F6BFF] py-3.5 text-sm font-medium text-white shadow-[0_4px_24px_-8px_rgba(47,107,255,0.6)] hover:bg-[#3A77FF] active:scale-[0.98] transition-all"
+        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-4 px-6 rounded-lg transition-all duration-200 flex items-center justify-center gap-3 group"
       >
-        Continue to Step 2 →
+        <span>Continue to Next Step</span>
+        <ArrowRight
+          size={20}
+          className="group-hover:translate-x-1 transition-transform duration-200"
+        />
       </button>
     </div>
   )
@@ -403,32 +367,32 @@ function ResumeUpload({
         <button
           type="button"
           onClick={() => fileRef.current?.click()}
-          className="sf w-full rounded-lg border border-dashed border-white/20 bg-gray-800/10 px-4 py-6 text-sm text-white/60 hover:border-white/40 hover:text-white/80 transition-all"
+          className="w-full bg-gray-800/60 border border-dashed border-gray-600/50 rounded-lg px-4 py-6 text-sm text-gray-400 hover:border-gray-500 hover:text-white/70 transition-all duration-200"
         >
           Click to upload PDF or Word (max 10 MB)
         </button>
       )}
 
       {status === "uploading" && (
-        <div className="sf w-full rounded-lg border border-white/10 bg-gray-800/10 px-4 py-3 text-sm text-white/60">
+        <div className="w-full bg-gray-800/60 border border-gray-600/50 rounded-lg px-4 py-3 text-sm text-gray-400">
           Uploading {filename}…
         </div>
       )}
 
       {status === "done" && value && (
-        <div className="sf flex items-center justify-between rounded-lg border border-white/10 bg-gray-800/10 px-4 py-3 text-sm">
+        <div className="flex items-center justify-between bg-gray-800/60 border border-gray-600/50 rounded-lg px-4 py-3 text-sm">
           <a
             href={value}
             target="_blank"
             rel="noopener noreferrer"
-            className="truncate text-white/80 hover:text-white"
+            className="truncate text-white hover:text-blue-400"
           >
             {filename || "Resume uploaded"}
           </a>
           <button
             type="button"
             onClick={clear}
-            className="ml-3 text-xs text-white/40 hover:text-white/80"
+            className="ml-3 text-xs text-gray-400 hover:text-white"
           >
             Replace
           </button>
@@ -440,11 +404,11 @@ function ResumeUpload({
           <button
             type="button"
             onClick={() => fileRef.current?.click()}
-            className="sf w-full rounded-lg border border-dashed border-red-400/40 bg-gray-800/10 px-4 py-6 text-sm text-red-400 hover:border-red-400/60 transition-all"
+            className="w-full bg-gray-800/60 border border-dashed border-red-500/50 rounded-lg px-4 py-6 text-sm text-red-400 hover:border-red-500 transition-all duration-200"
           >
             Upload failed — click to try again
           </button>
-          {error && <p className="sf text-xs text-red-400">{error}</p>}
+          {error && <p className="text-red-500 text-sm">{error}</p>}
         </div>
       )}
     </div>

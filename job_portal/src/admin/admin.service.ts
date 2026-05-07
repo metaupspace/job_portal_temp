@@ -12,4 +12,12 @@ export class AdminService {
   findByEmail(email: string): Promise<AdminDocument | null> {
     return this.adminModel.findOne({ email: email.toLowerCase() }).exec();
   }
+
+  findById(id: string): Promise<AdminDocument | null> {
+    return this.adminModel.findById(id).exec();
+  }
+
+  async updatePassword(id: string, passwordHash: string): Promise<void> {
+    await this.adminModel.updateOne({ _id: id }, { $set: { passwordHash } }).exec();
+  }
 }

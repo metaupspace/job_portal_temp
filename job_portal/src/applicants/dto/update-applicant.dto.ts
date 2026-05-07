@@ -10,5 +10,5 @@ export class UpdateApplicantDto {
   @ApiPropertyOptional() @IsOptional() @IsString() @IsNotEmpty() @MaxLength(500) linkedinId?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @IsNotEmpty() @MaxLength(200) qualification?: string;
   @ApiPropertyOptional({ enum: Experience }) @IsOptional() @IsEnum(Experience) experience?: Experience;
-  @ApiPropertyOptional() @IsOptional() @IsUrl() resumeUrl?: string;
+  @ApiPropertyOptional() @IsOptional() @IsUrl({ require_tld: false }) resumeUrl?: string;
 }

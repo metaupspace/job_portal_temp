@@ -1,39 +1,10 @@
 "use client"
-import React from "react"
-import Link from "next/link"
-import { ArrowRight } from "lucide-react"
+
+
 import Headers from "@/components/header"
-import { useOpenRoles } from "./useOpenRoles"
-import type { Job } from "@/types"
-
-const SkeletonCard = () => (
-  <div className="rounded-2xl border border-white/5 bg-[#0F1115] p-6 animate-pulse">
-    <div className="h-3 bg-white/10 rounded mb-3 w-1/3" />
-    <div className="h-4 bg-white/10 rounded mb-3 w-2/3" />
-    <div className="h-3 bg-white/10 rounded mb-2 w-full" />
-    <div className="h-3 bg-white/10 rounded mb-6 w-4/5" />
-    <div className="h-10 bg-white/10 rounded-full" />
-  </div>
-)
-
-const RoleCard = ({ job }: { job: Job }) => (
-  <Link
-    href={`/careers/${job.slug}`}
-    className="group relative flex flex-col rounded-2xl border border-white/5 bg-[#0F1115] p-5 sm:p-6 transition-colors duration-300 hover:border-white/10 hover:bg-[#12151A]"
-  >
-    <p className="mb-2 sm:mb-3 text-[12px] sm:text-[13px] font-normal text-zinc-400">{job.domain}</p>
-    <h3 className="mb-2 sm:mb-3 text-[15px] sm:text-[17px] font-semibold leading-snug tracking-tight text-white">
-      {job.title}
-    </h3>
-    <p className="mb-5 sm:mb-6 text-[13px] sm:text-[14px] leading-relaxed text-zinc-400 line-clamp-3">
-      {job.description}
-    </p>
-    <span className="mt-auto flex w-full items-center justify-center gap-2 rounded-full bg-[#2F6BFF] py-2.5 sm:py-3 text-[13px] sm:text-[14px] font-medium text-white shadow-[0_4px_24px_-8px_rgba(47,107,255,0.6)] transition-transform duration-200 group-hover:bg-[#3A77FF] group-active:scale-[0.98]">
-      View Details
-      <ArrowRight className="h-4 w-4" strokeWidth={2.5} aria-hidden="true" />
-    </span>
-  </Link>
-)
+import { SkeletonCard } from "@/components/shared"
+import { useOpenRoles } from "@/hooks"
+import RoleCard from "./fragments/RoleCard"
 
 // Ambient background dots — kept from original design
 const STARS = [
@@ -76,7 +47,7 @@ export function OpenRoles() {
 
       <div className="relative mx-auto max-w-7xl">
         <Headers
-          label="OPENINGS"
+          label={jobs.length > 0 ? `${jobs.length} OPENINGS` : "NO OPENINGS"}
           heading="See all Open roles"
           subheading="AI solutions across industries, making innovation practical, efficient, and results-driven."
         />
@@ -118,19 +89,27 @@ export function OpenRoles() {
 
         {/* Cards */}
         {!error && (
-          <div className="mt-8 sm:mt-12 grid grid-cols-1 gap-4 sm:gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {isLoading
-              ? Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} />)
-              : jobs.length === 0
-              ? (
-                <p className="col-span-full text-center text-white/40 py-12">
-                  {activeTab === 'All'
-                    ? 'No open roles right now.'
-                    : `No ${activeTab} roles right now.`}
-                </p>
-              )
-              : jobs.map((job) => <RoleCard key={job._id} job={job} />)}
-          </div>
+          isLoading ? (
+            <div className="mt-8 sm:mt-12 grid grid-cols-1 gap-4 sm:gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} />)}
+            </div>
+          ) : jobs.length === 0 ? (
+            <p className="mt-8 sm:mt-12 text-center text-white/40 py-12">
+              {activeTab === 'All'
+                ? 'No open roles right now.'
+                : `No ${activeTab} roles right now.`}
+            </p>
+          ) : jobs.length === 1 ? (
+            <div className="mt-8 sm:mt-12 flex justify-center">
+              <div className="w-full sm:max-w-md">
+                <RoleCard job={jobs[0]} />
+              </div>
+            </div>
+          ) : (
+            <div className="mt-8 sm:mt-12 grid grid-cols-1 gap-4 sm:gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {jobs.map((job) => <RoleCard key={job._id} job={job} />)}
+            </div>
+          )
         )}
       </div>
     </section>

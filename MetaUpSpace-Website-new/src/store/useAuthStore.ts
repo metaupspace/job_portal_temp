@@ -1,7 +1,12 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { api, getErrorMessage, type ApiResponse } from '@/lib/api'
-import type { AuthStep, AuthTokens, ApplicantProfile } from '@/types'
+import type {
+  AuthStep,
+  AuthTokens,
+  ApplicantProfile,
+  UpdateApplicantPayload,
+} from '@/types'
 
 interface AuthState {
   step: AuthStep
@@ -16,6 +21,7 @@ interface AuthActions {
   requestOtp: (email: string) => Promise<void>
   verifyOtp: (email: string, otp: string) => Promise<void>
   fetchProfile: () => Promise<void>
+  updateProfile: (payload: UpdateApplicantPayload) => Promise<boolean>
   clearError: () => void
   logout: () => void
 }
@@ -70,6 +76,23 @@ export const useAuthStore = create<AuthState & AuthActions>()(
           set({ profile: data.data, isLoading: false })
         } catch (err) {
           set({ error: getErrorMessage(err), isLoading: false })
+        }
+      },
+
+      updateProfile: async (payload) => {
+        const { tokens } = get()
+        if (!tokens.accessToken) return false
+        set({ isLoading: true, error: null })
+        try {
+          const { data } = await api.patch<ApiResponse<ApplicantProfile>>(
+            '/applicants/me',
+            payload,
+          )
+          set({ profile: data.data, isLoading: false })
+          return true
+        } catch (err) {
+          set({ error: getErrorMessage(err), isLoading: false })
+          return false
         }
       },
 

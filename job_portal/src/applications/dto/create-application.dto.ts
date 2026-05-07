@@ -28,7 +28,7 @@ export class CreateApplicationDto {
   @ApiProperty({ example: '30 days' }) @IsString() @IsNotEmpty() @MaxLength(100) noticePeriod: string;
   @ApiPropertyOptional({ example: 'John Smith' }) @IsOptional() @IsString() @MaxLength(200) referredBy?: string;
   @ApiProperty({ enum: HearAboutUs }) @IsEnum(HearAboutUs) hearAboutUs: HearAboutUs;
-  @ApiProperty({ example: 'https://res.cloudinary.com/demo/resume.pdf' }) @IsUrl() resumeUrl: string;
+  @ApiProperty({ example: 'https://res.cloudinary.com/demo/resume.pdf' }) @IsUrl({ require_tld: false }) resumeUrl: string;
   @ApiProperty({ example: 'I have 3 years of React experience...' }) @IsString() @IsNotEmpty() @MaxLength(5000) whyGoodFit: string;
   @ApiProperty({ example: 'I want to grow with a startup...' }) @IsString() @IsNotEmpty() @MaxLength(5000) whyJoinUs: string;
 
