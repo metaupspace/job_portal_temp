@@ -12,21 +12,16 @@ export function AuthBanner() {
   const {
     step,
     email,
-    totpSetup,
     isLoading,
     error,
     requestOtp,
     verifyOtp,
-    setupTotp,
-    confirmTotp,
-    verifyTotp,
     clearError,
     logout,
   } = useAuthStore()
 
   const [emailInput, setEmailInput] = useState("")
   const [otpInput, setOtpInput] = useState("")
-  const [totpInput, setTotpInput] = useState("")
 
   if (step === "authenticated") {
     return (
@@ -93,98 +88,6 @@ export function AuthBanner() {
             maxLength={6}
             required
             className={`${inputClass} tracking-[0.4em] text-center`}
-          />
-          <button type="submit" disabled={isLoading} className={btnClass}>
-            {isLoading ? "Verifying…" : "Verify"}
-          </button>
-        </form>
-        {error && <p className="sf mt-2 text-xs text-red-400">{error}</p>}
-      </div>
-    )
-  }
-
-  if (step === "totp-enroll") {
-    return (
-      <div className="mb-6 rounded-xl border border-white/8 bg-white/[0.03] backdrop-blur-sm px-5 py-4">
-        <p className="sf text-sm font-medium text-white mb-1">Secure your account with 2FA</p>
-        <p className="sf text-xs text-white/40 mb-4">
-          Set up an authenticator app (Google Authenticator, Authy) to continue.
-        </p>
-        <button
-          onClick={() => { clearError(); setupTotp() }}
-          disabled={isLoading}
-          className={btnClass}
-        >
-          {isLoading ? "Generating…" : "Set up 2FA →"}
-        </button>
-        {error && <p className="sf mt-2 text-xs text-red-400">{error}</p>}
-      </div>
-    )
-  }
-
-  if (step === "totp-setup") {
-    return (
-      <div className="mb-6 rounded-xl border border-white/8 bg-white/[0.03] backdrop-blur-sm px-5 py-5 space-y-4">
-        <div>
-          <p className="sf text-sm font-medium text-white mb-1">Scan with your authenticator app</p>
-          <p className="sf text-xs text-white/40">Google Authenticator, Authy, or 1Password</p>
-        </div>
-        {totpSetup?.qrCodeUrl && (
-          <div className="inline-block p-3 bg-white rounded-xl">
-            <img
-              src={totpSetup.qrCodeUrl}
-              alt="TOTP QR code"
-              width={148}
-              height={148}
-            />
-          </div>
-        )}
-        {totpSetup?.secret && (
-          <div className="rounded-lg bg-white/5 border border-white/10 px-4 py-3">
-            <p className="sf text-xs text-white/40 mb-1">Manual entry key</p>
-            <code className="sf text-sm text-white tracking-wider break-all">{totpSetup.secret}</code>
-          </div>
-        )}
-        <form
-          onSubmit={(e) => { e.preventDefault(); clearError(); confirmTotp(totpInput) }}
-          className="flex gap-2"
-        >
-          <input
-            type="text"
-            value={totpInput}
-            onChange={(e) => setTotpInput(e.target.value)}
-            placeholder="Enter 6-digit code"
-            maxLength={6}
-            required
-            className={`${inputClass} tracking-[0.4em] text-center`}
-          />
-          <button type="submit" disabled={isLoading} className={btnClass}>
-            {isLoading ? "Verifying…" : "Complete Setup"}
-          </button>
-        </form>
-        {error && <p className="sf mt-2 text-xs text-red-400">{error}</p>}
-      </div>
-    )
-  }
-
-  if (step === "totp-verify") {
-    return (
-      <div className="mb-6 rounded-xl border border-blue-500/20 bg-blue-500/5 backdrop-blur-sm px-5 py-4">
-        <p className="sf text-sm text-white/60 mb-3">
-          Enter your authenticator code or backup code:
-        </p>
-        <form
-          onSubmit={(e) => { e.preventDefault(); clearError(); verifyTotp(totpInput) }}
-          className="flex gap-2"
-        >
-          <input
-            type="text"
-            value={totpInput}
-            onChange={(e) => setTotpInput(e.target.value)}
-            placeholder="123456 or XXXX-XXXX-XXXX-XXXX"
-            maxLength={19}
-            required
-            className={inputClass}
           />
           <button type="submit" disabled={isLoading} className={btnClass}>
             {isLoading ? "Verifying…" : "Verify"}

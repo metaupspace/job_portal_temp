@@ -7,7 +7,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
@@ -100,10 +100,7 @@ export class ApplicantsService {
   async verifyOtp(
     email: string,
     otp: string,
-  ): Promise<
-    | { requiresTotpSetup: true; setupToken: string }
-    | { requiresTotp: true; sessionToken: string }
-  > {
+  ): Promise<{ accessToken: string }> {
     const applicant = await this.applicantModel
       .findOne({ email: email.toLowerCase() })
       .exec();
@@ -125,20 +122,12 @@ export class ApplicantsService {
     await applicant.save();
 
     const id = (applicant._id as { toString(): string }).toString();
-
-    if (!applicant.mfaEnrolled) {
-      const setupToken = this.jwtService.sign(
-        { sub: id, email: applicant.email, role: 'applicant-setup' },
-        { expiresIn: '15m' },
-      );
-      return { requiresTotpSetup: true, setupToken };
-    }
-
-    const sessionToken = this.jwtService.sign(
-      { sub: id, email: applicant.email, role: 'applicant-session' },
-      { expiresIn: '5m' },
-    );
-    return { requiresTotp: true, sessionToken };
+    const accessToken = this.jwtService.sign({
+      sub: id,
+      email: applicant.email,
+      role: 'applicant',
+    });
+    return { accessToken };
   }
 
   // ── TOTP (factor 2) ─────────────────────────────────────────────────────────
@@ -282,10 +271,11 @@ export class ApplicantsService {
       appliedAt: Date;
     }[]
   > {
+    const applicantObjectId = new Types.ObjectId(applicantId);
     const applications = await this.applicationModel
       .find({
         $or: [
-          { applicantId },
+          { applicantId: applicantObjectId },
           { email: email.toLowerCase(), applicantId: null },
         ],
       })

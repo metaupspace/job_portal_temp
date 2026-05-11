@@ -21,12 +21,6 @@ const navLinks = [
     className: "text-white/90 hover:text-white",
     gradient: false,
   },
-  // {
-  //   label: 'Blog',
-  //   href: '/blogs',
-  //   className: 'text-white/90 hover:text-white',
-  //   gradient: false,
-  // },
   {
     label: "Careers",
     href: "/careers",

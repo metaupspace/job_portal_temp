@@ -47,7 +47,10 @@
 /* ENHANCED TEXT MORPHING ANIMATION */
 .buttonCircular span,
 .buttonCircular .arrow {
-  display: block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
   position: relative;
   z-index: 10;
   color: white;

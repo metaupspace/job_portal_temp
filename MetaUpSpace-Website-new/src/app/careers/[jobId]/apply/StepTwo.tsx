@@ -6,18 +6,18 @@ import type {
   Control,
   FieldErrors,
 } from "react-hook-form"
-import CustomSelect from "@/components/form/CustomSelect"
+import {
+  CustomSelect,
+  FormCard,
+  FormCheckbox,
+  FormInput,
+  FormSubmitButton,
+  FormTextarea,
+} from "@/components/form"
 import type { CreateApplicationPayload, Job } from "@/types"
 
-const inputClass =
-  "w-full sf rounded-lg bg-gray-800/10 outline outline-1 outline-offset-[-1px] outline-white/20 backdrop-blur-sm px-3 py-2.5 text-sm text-white placeholder-white/25 focus:outline-white/40 transition-all resize-none"
-
-const labelClass = "sf block text-sm text-white/60 mb-1.5"
-
-const errorClass = "sf mt-1.5 text-xs text-red-400"
-
-const cardClass =
-  "rounded-2xl border border-white/5 bg-[#0F1115] p-6 space-y-5"
+const labelClass = "block text-white text-sm font-medium mb-3"
+const errorClass = "text-red-500 text-sm mt-1"
 
 interface Props {
   job: Job
@@ -39,59 +39,109 @@ export function StepTwo({
   isSubmitting,
 }: Props) {
   return (
-    <div className="space-y-4">
-
+    <div className="space-y-6">
       {job.customFields.length === 0 ? (
-        <div className={cardClass}>
-          <p className="sf text-sm text-white/30 text-center py-4">
-            No additional questions for this role.
+        <FormCard
+          title="Additional Questions"
+          subtitle="No additional questions for this role."
+        >
+          <p className="text-gray-400 text-sm text-center py-4">
+            You&apos;re all set — review and submit your application.
           </p>
-        </div>
+        </FormCard>
       ) : (
-        <div className={cardClass}>
-          <p className="sf text-xs uppercase tracking-widest bg-gradient-to-r from-blue-500 via-blue-600 to-cyan-500 bg-clip-text text-transparent mb-2">
-            Additional Questions
-          </p>
-
+        <FormCard
+          title="Additional Questions"
+          subtitle="A few role-specific details we'd like to know."
+        >
           {job.customFields.map((field) => {
             const fieldPath = `customResponses.${field.fieldId}` as const
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const fieldError = (errors as any)?.customResponses?.[field.fieldId]
+              ?.message as string | undefined
 
-            return (
-              <div key={field.fieldId}>
-                <label className={labelClass}>
-                  {field.label}
-                  {field.required && <span className="text-white/30"> *</span>}
-                </label>
+            if (field.fieldType === "text") {
+              return (
+                <FormInput
+                  key={field.fieldId}
+                  label={field.label}
+                  required={field.required}
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  {...register(fieldPath as any, {
+                    required: field.required
+                      ? `${field.label} is required`
+                      : false,
+                  })}
+                  error={fieldError}
+                />
+              )
+            }
 
-                {field.fieldType === "TEXT" && (
-                  <input
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    {...register(fieldPath as any, {
-                      required: field.required ? `${field.label} is required` : false,
-                    })}
-                    type="text"
-                    className={inputClass}
-                  />
-                )}
+            if (field.fieldType === "textarea") {
+              return (
+                <FormTextarea
+                  key={field.fieldId}
+                  label={field.label}
+                  required={field.required}
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  {...register(fieldPath as any, {
+                    required: field.required
+                      ? `${field.label} is required`
+                      : false,
+                  })}
+                  error={fieldError}
+                />
+              )
+            }
 
-                {field.fieldType === "TEXTAREA" && (
-                  <textarea
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    {...register(fieldPath as any, {
-                      required: field.required ? `${field.label} is required` : false,
-                    })}
-                    rows={4}
-                    className={inputClass}
-                  />
-                )}
+            if (field.fieldType === "number") {
+              return (
+                <FormInput
+                  key={field.fieldId}
+                  label={field.label}
+                  required={field.required}
+                  type="number"
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  {...register(fieldPath as any, {
+                    required: field.required
+                      ? `${field.label} is required`
+                      : false,
+                    valueAsNumber: true,
+                  })}
+                  error={fieldError}
+                />
+              )
+            }
 
-                {field.fieldType === "SELECT" && (
+            if (field.fieldType === "boolean") {
+              return (
+                <FormCheckbox
+                  key={field.fieldId}
+                  label={field.label}
+                  id={field.fieldId}
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  {...register(fieldPath as any)}
+                />
+              )
+            }
+
+            if (field.fieldType === "select") {
+              return (
+                <div key={field.fieldId}>
+                  <label className={labelClass}>
+                    {field.label}
+                    {field.required && (
+                      <span className="text-blue-400"> *</span>
+                    )}
+                  </label>
                   <Controller
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     name={fieldPath as any}
                     control={control}
                     rules={{
-                      required: field.required ? `${field.label} is required` : false,
+                      required: field.required
+                        ? `${field.label} is required`
+                        : false,
                     }}
                     render={({ field: f }) => (
                       <CustomSelect
@@ -106,64 +156,34 @@ export function StepTwo({
                       />
                     )}
                   />
-                )}
+                  {fieldError && <p className={errorClass}>{fieldError}</p>}
+                </div>
+              )
+            }
 
-                {field.fieldType === "BOOLEAN" && (
-                  <div className="flex items-center gap-3 py-1">
-                    <input
-                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                      {...register(fieldPath as any)}
-                      type="checkbox"
-                      id={field.fieldId}
-                      className="w-4 h-4 rounded border-white/20 bg-white/5 accent-[#2F6BFF]"
-                    />
-                    <label htmlFor={field.fieldId} className="sf text-sm text-white/60 cursor-pointer">
-                      {field.label}
-                    </label>
-                  </div>
-                )}
-
-                {field.fieldType === "NUMBER" && (
-                  <input
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    {...register(fieldPath as any, {
-                      required: field.required ? `${field.label} is required` : false,
-                      valueAsNumber: true,
-                    })}
-                    type="number"
-                    className={inputClass}
-                  />
-                )}
-
-                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                {(errors as any)?.customResponses?.[field.fieldId] && (
-                  <p className={errorClass}>
-                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                    {(errors as any).customResponses[field.fieldId].message}
-                  </p>
-                )}
-              </div>
-            )
+            return null
           })}
-        </div>
+        </FormCard>
       )}
 
       <div className="flex gap-3">
         <button
           type="button"
           onClick={onBack}
-          className="sf flex-1 rounded-full border border-white/10 py-3.5 text-sm font-medium text-white/60 hover:text-white hover:border-white/20 hover:bg-white/5 active:scale-[0.98] transition-all"
+          className="flex-1 bg-gray-800/60 border border-gray-600/50 hover:bg-gray-800/80 hover:border-gray-500 text-white font-medium py-4 px-6 rounded-lg transition-all duration-200"
         >
           ← Back
         </button>
-        <button
-          type="button"
-          onClick={onSubmit}
-          disabled={isSubmitting}
-          className="sf flex-2 flex-[2] rounded-full bg-[#2F6BFF] py-3.5 text-sm font-medium text-white shadow-[0_4px_24px_-8px_rgba(47,107,255,0.6)] hover:bg-[#3A77FF] disabled:opacity-50 active:scale-[0.98] transition-all"
-        >
-          {isSubmitting ? "Submitting…" : "Submit Application"}
-        </button>
+        <div className="flex-[2]">
+          <FormSubmitButton
+            type="button"
+            onClick={onSubmit}
+            isLoading={isSubmitting}
+            loadingText="Submitting..."
+          >
+            <span>Submit Application</span>
+          </FormSubmitButton>
+        </div>
       </div>
     </div>
   )

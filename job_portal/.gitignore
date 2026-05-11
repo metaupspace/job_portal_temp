@@ -24,5 +24,8 @@ npm-debug.log*
 # NestJS build
 /build
 
+# Local uploads
+/uploads
+
 # Graph analysis output
 /graphify-out

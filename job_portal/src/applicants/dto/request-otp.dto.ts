@@ -4,5 +4,5 @@ import { ApiProperty } from '@nestjs/swagger';
 export class RequestOtpDto {
   @ApiProperty({ example: 'jane@example.com' })
   @IsEmail()
-  email: string;
+  email!: string;
 }

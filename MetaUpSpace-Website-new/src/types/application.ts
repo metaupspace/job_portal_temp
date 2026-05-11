@@ -17,7 +17,7 @@ export interface CreateApplicationPayload {
   resumeUrl: string
   whyGoodFit: string
   whyJoinUs: string
-  // tech-only fields (conditional on job.type === 'TECH')
+  // tech-only fields (conditional on job.type === 'tech')
   githubId?: string
   portfolioLink?: string
   technologiesKnown?: string
@@ -33,4 +33,13 @@ export interface Application extends CreateApplicationPayload {
   status: ApplicationStatus
   createdAt: string
   updatedAt: string
+}
+
+// Shape returned by GET /applicants/me/applications — a summary, not the full doc.
+export interface ApplicationSummary {
+  applicationId: string
+  jobTitle: string
+  jobSlug: string
+  status: ApplicationStatus
+  appliedAt: string
 }

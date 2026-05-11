@@ -4,7 +4,7 @@ import Loader from "@/components/Loader"
 import { AuthBanner } from "./AuthBanner"
 import { StepOne } from "./StepOne"
 import { StepTwo } from "./StepTwo"
-import { useApplyForm } from "@/hooks/useApplyForm"
+import { useApplyForm } from "@/hooks"
 
 interface Props {
   jobId: string

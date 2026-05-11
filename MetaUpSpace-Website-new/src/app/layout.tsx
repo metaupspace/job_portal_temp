@@ -33,7 +33,7 @@ export default function RootLayout({
         <div className="w-full">
         <Navbar/>
         {children}
-        <ConditionalCTA/>
+        {/* <ConditionalCTA/> */}
         <Footer/>
         </div>
       </body>

@@ -41,9 +41,11 @@ export default function Button({
 
   const ButtonContent = () => (
     <>
-      <span className="font-medium">{children}</span>
+      <span className="font-medium inline-flex items-center leading-none">
+        {children}
+      </span>
       {icon && (
-        <span className="arrow w-5 h-5">
+        <span className="arrow inline-flex items-center justify-center w-5 h-5 leading-none">
           {icon}
         </span>
       )}
