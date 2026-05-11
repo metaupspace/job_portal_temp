@@ -4,12 +4,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-
-interface JwtUser {
-  userId: string;
-  email: string;
-  role: string;
-}
+import type { JwtUser } from '../../auth/strategies/jwt.strategy';
 
 @Injectable()
 export class AdminGuard extends AuthGuard('jwt') {
@@ -18,8 +13,17 @@ export class AdminGuard extends AuthGuard('jwt') {
     user: JwtUser | false,
   ): TUser {
     if (err || !user) throw err ?? new UnauthorizedException();
-    if (user.role !== 'admin')
+
+    const normalizedRoles = new Set(
+      [user.role, ...(user.roles ?? [])]
+        .filter(Boolean)
+        .map((role) => String(role).toUpperCase()),
+    );
+
+    if (!normalizedRoles.has('ADMIN') && !normalizedRoles.has('HR')) {
       throw new ForbiddenException('Admin access required');
+    }
+
     return user as unknown as TUser;
   }
 }

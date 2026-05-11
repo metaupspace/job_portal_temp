@@ -2,8 +2,10 @@ import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 
 export interface JwtAdminUser {
   userId: string;
-  email: string;
+  employeeId: string | null;
+  email?: string;
   role: string;
+  roles: string[];
 }
 
 export const CurrentAdmin = createParamDecorator(
