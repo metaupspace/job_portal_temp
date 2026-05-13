@@ -13,6 +13,7 @@ export default function JobDetails({ jobId }: Props) {
   const { selectedJob: job, fetchJob, isLoading, error } = useJobsStore()
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" })
     fetchJob(jobId)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [jobId])

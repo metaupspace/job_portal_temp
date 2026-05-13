@@ -6,6 +6,7 @@ import {
   Delete,
   Body,
   Param,
+  Query,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -18,6 +19,7 @@ import { AdminOnly } from '../common/decorators/admin-only.decorator';
 import { JobsService } from './jobs.service';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
+import { QueryJobsDto } from './dto/query-jobs.dto';
 import { ParseMongoIdPipe } from '../common/pipes/parse-mongo-id.pipe';
 import { ResponseMessage } from '../common/decorators/response-message.decorator';
 
@@ -30,11 +32,11 @@ export class AdminJobsController {
   @Get()
   @AdminOnly()
   @ResponseMessage('Jobs fetched successfully')
-  @ApiOperation({ summary: 'List all jobs (admin)' })
-  @ApiResponse({ status: 200, description: 'All jobs including inactive' })
+  @ApiOperation({ summary: 'List jobs (admin, paginated, searchable)' })
+  @ApiResponse({ status: 200, description: 'Paginated jobs including inactive' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  findAll() {
-    return this.jobsService.findAllAdmin();
+  findAll(@Query() query: QueryJobsDto) {
+    return this.jobsService.findAllAdmin(query);
   }
 
   @Post()

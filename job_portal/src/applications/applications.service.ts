@@ -146,8 +146,19 @@ export class ApplicationsService {
     const page = query.page ?? 1;
     const limit = query.limit ?? 20;
     const filter: Record<string, unknown> = {};
-    if (query.jobId) filter.jobId = query.jobId;
+    if (query.jobSlug) {
+      const job = await this.jobsService.findBySlugAdmin(query.jobSlug);
+      filter.jobId = job._id;
+    }
     if (query.status) filter.status = query.status;
+    if (query.search) {
+      const regex = { $regex: query.search, $options: 'i' };
+      filter.$or = [
+        { fullName: regex },
+        { email: regex },
+        { contactNumber: regex },
+      ];
+    }
 
     const [data, total] = await Promise.all([
       this.applicationModel

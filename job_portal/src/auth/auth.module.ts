@@ -5,6 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import type ms from 'ms';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { JwtUtilsService } from './jwt-utils.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { ApplicantJwtStrategy } from './strategies/applicant-jwt.strategy';
 import { AdminModule } from '../admin/admin.module';
@@ -27,7 +28,7 @@ import { AdminModule } from '../admin/admin.module';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, ApplicantJwtStrategy],
-  exports: [JwtModule, PassportModule],
+  providers: [AuthService, JwtUtilsService, JwtStrategy, ApplicantJwtStrategy],
+  exports: [JwtModule, PassportModule, JwtUtilsService],
 })
 export class AuthModule {}
