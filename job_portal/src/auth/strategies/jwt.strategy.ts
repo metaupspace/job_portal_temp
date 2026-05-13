@@ -2,82 +2,43 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
-import * as jwt from 'jsonwebtoken';
-
-type JwtPayloadValue = string | string[] | number | null | undefined;
-
-interface SupportedJwtPayload {
-  id?: string;
-  userId?: string;
-  sub?: string;
-  empId?: string;
-  employeeId?: string;
-  employeeID?: string;
-  email?: string;
-  role?: JwtPayloadValue;
-  roles?: JwtPayloadValue;
-}
-
-export interface JwtUser {
-  userId: string;
-  employeeId: string | null;
-  email?: string;
-  role: string;
-  roles: string[];
-}
-
-const normalizeRoles = (roles: JwtPayloadValue): string[] => {
-  if (Array.isArray(roles)) {
-    return roles.map((role) => String(role));
-  }
-
-  if (typeof roles === 'string') {
-    return [roles];
-  }
-
-  return [];
-};
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(configService: ConfigService) {
+  constructor(configService: ConfigService, jwtService: JwtService) {
     const secret = configService.getOrThrow<string>('jwt.secret');
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKeyProvider: (_request, rawJwtToken, done) => {
-        const token = String(rawJwtToken);
-
+      secretOrKeyProvider: (
+        _req: unknown,
+        rawJwtToken: string,
+        done: (err: Error | null, secret?: string | Buffer) => void,
+      ) => {
         try {
-          jwt.verify(token, secret);
+          jwtService.verify(rawJwtToken, { secret });
           done(null, secret);
-        } catch (rawError) {
+        } catch {
           try {
             const base64Secret = Buffer.from(secret, 'base64');
-            jwt.verify(token, base64Secret);
+            jwtService.verify(rawJwtToken, { secret: base64Secret });
             done(null, base64Secret);
-          } catch {
-            done(rawError as Error);
+          } catch (err) {
+            done(err as Error);
           }
         }
       },
     });
   }
 
-  validate(payload: SupportedJwtPayload): JwtUser {
-    const roles = [
-      ...normalizeRoles(payload.roles),
-      ...normalizeRoles(payload.role),
-    ];
-    const uniqueRoles = [...new Set(roles)];
-
-    return {
-      userId: payload.id || payload.userId || payload.sub || '',
-      employeeId:
-        payload.empId || payload.employeeId || payload.employeeID || null,
-      email: payload.email,
-      role: uniqueRoles[0] || '',
-      roles: uniqueRoles,
-    };
+  validate(payload: Record<string, unknown>) {
+    const userId = (payload.sub ?? payload.id ?? payload.userId) as string;
+    const role = (
+      Array.isArray(payload.roles)
+        ? payload.roles[0]
+        : (payload.role ?? payload.roles)
+    ) as string;
+    return { userId, email: payload.email as string, role };
   }
 }

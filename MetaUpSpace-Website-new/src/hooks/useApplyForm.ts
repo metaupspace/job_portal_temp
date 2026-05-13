@@ -74,10 +74,16 @@ export function useApplyForm(jobId: string) {
 
   const nextStep = async () => {
     const valid = await trigger(STEP_ONE_FIELDS)
-    if (valid) setStep(2)
+    if (valid) {
+      setStep(2)
+      window.scrollTo({ top: 0, behavior: "instant" })
+    }
   }
 
-  const prevStep = () => setStep(1)
+  const prevStep = () => {
+    setStep(1)
+    window.scrollTo({ top: 0, behavior: "instant" })
+  }
 
   const onSubmit = handleSubmit((values) => {
     if (!job) return

@@ -44,10 +44,7 @@ export class AuthService {
     return { access_token: this.jwtService.sign(payload) };
   }
 
-  async changePassword(
-    adminId: string,
-    dto: ChangePasswordDto,
-  ): Promise<void> {
+  async changePassword(adminId: string, dto: ChangePasswordDto): Promise<void> {
     const admin = await this.adminService.findById(adminId);
     if (!admin) {
       throw new NotFoundException('Admin not found');
