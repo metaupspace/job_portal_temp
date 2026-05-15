@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { getJwtSecret } from './jwt-secret.util';
 
 export interface JwtUserDetails {
   id: string | undefined;
@@ -21,7 +22,7 @@ export class JwtUtilsService {
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
   ) {
-    this.secret = this.configService.getOrThrow<string>('jwt.secret');
+    this.secret = getJwtSecret(this.configService);
   }
 
   verifyWithFallback<T extends object>(token: string): T {
@@ -52,7 +53,9 @@ export class JwtUtilsService {
       const decoded = this.verifyWithFallback<Record<string, string>>(token);
       return decoded.id ?? decoded.userId ?? decoded.sub ?? null;
     } catch (error) {
-      this.logger.warn(`Failed to extract user from token: ${(error as Error).message}`);
+      this.logger.warn(
+        `Failed to extract user from token: ${(error as Error).message}`,
+      );
       return null;
     }
   }
@@ -70,7 +73,10 @@ export class JwtUtilsService {
     return {
       id: (decoded.id ?? decoded.userId ?? decoded.sub) as string | undefined,
       userId: decoded.id as string | undefined,
-      employeeId: (decoded.empId ?? decoded.employeeId ?? decoded.employeeID ?? null) as string | null,
+      employeeId: (decoded.empId ??
+        decoded.employeeId ??
+        decoded.employeeID ??
+        null) as string | null,
       email: decoded.email as string,
       roles: (decoded.roles ?? decoded.role ?? []) as string[],
       iat: decoded.iat as number | undefined,
